@@ -1,19 +1,23 @@
 import React, { useState, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { Col, Container, Row, Button, Form } from 'reactstrap';
-// import DownloadLink from "react-download-link";
+require('dotenv').config()
+
+const download = require('image-downloader')
+
 
 const Search = () => {
     const [thumbnailData, setThumbnailData] = useState([])
     const searchInput = useRef('');
 
-    // console.log(searchInput.current.value);
+    console.log(searchInput.current.value);
 
     const submitFormm = (e) => {
         e.preventDefault();
     }
     const searchMove = () => {
         console.log(searchInput.current.value);
-        let youtubeURL = `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${searchInput.current.value}&type=video&key=AIzaSyAMPYngoK9pI9NiJM0RqGT52Z6o2oiWVjM`
+        let youtubeURL = `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${searchInput.current.value}&type=video&key=${process.env.REACT_APP_API}`
         fetch(youtubeURL)
             .then(res => res.json())
             .then(data => setThumbnailData(data.items))
@@ -40,8 +44,8 @@ const Search = () => {
                             <Row className="my-4">
                                 <Col>
                                     <img className="mb-1" src={item.snippet.thumbnails.high.url} alt="" /> <br />
-                                    <button>
-                                        <a href={item.snippet.thumbnails.high.url} download="image"> download</a>
+                                    <button >
+                                       <Link to={item.snippet.thumbnails.url} target="_blank" download>Download</Link>
                                     </button>
                                 </Col>
                             </Row>
