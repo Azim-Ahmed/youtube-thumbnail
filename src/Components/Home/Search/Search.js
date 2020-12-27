@@ -5,7 +5,7 @@ require('dotenv').config()
 
 const download = require('image-downloader')
 
-
+//use AIzaSyAMPYngoK9pI9NiJM0RqGT52Z6o2oiWVjM API instead of ${process.env.REACT_APP_API} 
 const Search = () => {
     const [thumbnailData, setThumbnailData] = useState([])
     const searchInput = useRef('');
