@@ -1,23 +1,54 @@
 import React, { useState, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import { Col, Container, Row, Button, Form } from 'reactstrap';
 require('dotenv').config()
+// https://youtu.be/lEipOiIQwxg
 
-const download = require('image-downloader')
+
+
+
 
 //use AIzaSyAMPYngoK9pI9NiJM0RqGT52Z6o2oiWVjM API instead of ${process.env.REACT_APP_API} 
 const Search = () => {
+
+    const _download = e => {
+        var _target= e.target;
+         const src=_target.dataset.link;
+     
+         const img = new Image();
+         img.crossOrigin = "Anonymous";
+         //img.crossOrigin = "Use-Credentials";
+         //img.crossOrigin = 'anonymous';  // This tells the browser to request cross-origin access when trying to download the image data.
+         // ref: https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_enabled_image#Implementing_the_save_feature
+         img.src = src;
+         img.onload = () => {
+           // create Canvas
+           const canvas = document.createElement('canvas');
+           const ctx = canvas.getContext('2d');
+           canvas.width = img.width;
+           canvas.height = img.height;
+           ctx.drawImage(img, 0, 0);
+           // create a tag
+           const a = document.createElement('a');
+           a.download = _target.name +'.png';
+           a.href = canvas.toDataURL('image/png');
+           
+           a.click();
+       };
+     };
+
+    
     const [thumbnailData, setThumbnailData] = useState([])
     const searchInput = useRef('');
 
-    console.log(searchInput.current.value);
+    // console.log(searchInput.current.value);
 
     const submitFormm = (e) => {
         e.preventDefault();
     }
     const searchMove = () => {
-        console.log(searchInput.current.value);
-        let youtubeURL = `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${searchInput.current.value}&type=video&key=${process.env.REACT_APP_API}`
+        // console.log(searchInput.current.value);
+        const _key='AIzaSyAw39Aum_egmG6Ezz3MTUQTzlHcxWnZies';
+        let youtubeURL = `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${searchInput.current.value}&type=video&key=${_key}`
         fetch(youtubeURL)
             .then(res => res.json())
             .then(data => setThumbnailData(data.items))
@@ -44,21 +75,25 @@ const Search = () => {
                             <Row className="my-4">
                                 <Col>
                                     <img className="mb-1" src={item.snippet.thumbnails.high.url} alt="" /> <br />
-                                    <button >
-                                       <Link to={item.snippet.thumbnails.url} target="_blank" download>Download</Link>
-                                    </button>
+                                       <Button type="button" data-link={item.snippet.thumbnails.high.url} target="_blank"
+                                        onClick={_download}
+                                      name="large" >Download</Button>
                                 </Col>
                             </Row>
                             <Row className="my-4">
                                 <Col>
                                     <img className="mb-1" src={item.snippet.thumbnails.medium.url} alt="" /> <br />
-                                    <button><a href={item.snippet.thumbnails.high.url} download="image"> download</a></button>
+                                    <Button  type="button" data-link={item.snippet.thumbnails.medium.url} target="_blank" 
+                                     name="medium"   onClick={_download}
+                                    >Download</Button>
                                 </Col>
                             </Row>
                             <Row className="my-4">
                                 <Col>
                                     <img className="mb-1" src={item.snippet.thumbnails.default.url} alt="" /> <br />
-                                    <button><a href={item.snippet.thumbnails.high.url} download="image"> download</a></button>
+                                    <Button  type="button" data-link={item.snippet.thumbnails.default.url} target="_blank" 
+                                     onClick={_download}
+                                   name="tiny" >Download</Button>
                                 </Col>
                             </Row>
                         </div>
